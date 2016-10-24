@@ -1,7 +1,7 @@
 #!/bin/bash
 ### MySQL Server Login Info ###
 USER="root"
-PASS="savage"
+PASS="root"
 HOST="127.0.0.1"
 DIR="$HOME/Backups"
 
