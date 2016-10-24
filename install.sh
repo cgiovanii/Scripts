@@ -85,6 +85,6 @@ sudo chmod 755 projecto-remove |sudo mv projecto-remove /usr/local/bin
 
 # Instale apartir daqui o que você desejar
 echo -e "\n--- Criando a pasta ~/Sites --- "
-[ ! -d Sites ] && mkdir -p Sites
+[ ! -d "Sites" ] && mkdir -p Sites
 
 echo "[OK] --- Ambiente de desenvolvimento concluido ---"
