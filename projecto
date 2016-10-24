@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+
+# Esse script cria um projecto de site em /home/nome/www e também
+# um novo virtual host para o projecto. Tem a opção de instalar
+# automaticamente a última versão do bootstrap 3, Wordpress ou Laravel.
+# Este script foi baseado originalmente no tutorial escrito por @nek no
+# Coderwall: https://coderwall.com/p/cqoplg
+
+sudo -v
+
+# Help do script.
+
+create-project-usage() {
+cat <<"USAGE"
+Uso: projecto [OPÇÕES] <nome do projecto>
+
+	-h,  --help         Mostra esta ajuda.
+	-r,  --remove       Remove o servidor virtual.
+	-ls, --lista        Lista os servidores virtuais.
+	-a,  --add          Cria um virtual host com uma pasta vazia.
+	-b,  --bootstrap    Cria um novo projeto em HTML5 (Bootstrap 3)
+	-l,  --laravel      Cria um novo projeto em Laravel 5
+	-w,  --wordpress	  Cria um novo projeto em wordpress
+
+Exemplos:
+
+	projecto -h  [--help]
+	projecto -ls [--lista]
+	projecto -l  [--laravel] filmes
+	projecto -w  [--wordpress] filmes
+	projecto -b  [--bootstrap] filmes
+	projecto -a  [--add] filmes
+	projecto -r  [--remove] filmes
+
+USAGE
+exit 0
+}
+
+# Remove o projecto e o Virtual Host.
+project-remove() {
+
+	echo "A remover o $url de /etc/hosts."
+	sudo sed -i '/'$url'/d' /etc/hosts
+
+	echo "A remover o virtual host $url."
+	rm -r $docroot
+	sudo a2dissite $url.conf
+	sudo rm /etc/apache2/sites-available/$url.conf
+	sudo service apache2 reload
+
+	echo "O virtual host $url foi removido com sucesso!."
+	exit 0
+}
+
+# Lista os virtual hosts.
+project-list() {
+	echo -e "### Virtual hosts disponíveis:"
+	ls -a1 /etc/apache2/sites-available/*.conf
+
+	echo -e "\n### Virtual hosts habilitados:"
+	ls -a1 /etc/apache2/sites-enabled/*.conf
+	exit 0
+}
+
+# Constantes
+name=$2
+laravel=0
+wp=0
+site=0
+add=0
+bt_ver=3.3.7
+
+# Loop to read options and arguments.
+while [ $1 ]; do
+	case "$1" in
+		'--lista'|'-ls')
+			project-list;;
+		'--help'|'-h')
+			create-project-usage;;
+		'--remove'|'-r')
+			project-remove;;
+		'--add'|'-a')
+			add=1;;
+		'--bootstrap'|'-b')
+			site=1;;
+		'--wordpress'|'-w')
+			wp=1;;
+		'--laravel'|'-l')
+			laravel=1
+	esac
+	shift
+done
+
+# Cria a url com o tld apropriado.
+
+if [ "$laravel" = 1 ]; then
+    url="$name.app"
+else
+    url="$name.dev"
+fi
+
+docroot="$HOME/Sites/$url"
+
+# #Se o comando for executado sem nada vai para o Help.
+# if [ "$1"="" -a "$2"="" ];
+# then
+# 	create-project-usage
+# 	exit 0
+# fi
+
+# If creating a Laravel project then we'll use composer to create the
+# new project in the document root.
+if [ "$laravel" = 1 ]; then
+	# Check if the docroot exists, if it does not exist then we'll create it.
+	if [ ! -d "$docroot" ]; then
+		echo "Criando a pasta $docroot..."
+		mkdir -p $docroot
+	fi
+	echo -e "Instalando a última versão do Laravel...\n"
+	composer create-project --prefer-dist laravel/laravel $docroot
+
+	echo -e "Criando a base de dados para o Laravel...\n"
+	mysql -u root -psavage -e "CREATE DATABASE $name"
+
+	docroot="$docroot/public"
+fi
+
+# If creating a Laravel project then we'll use composer to create the
+# new project in the document root.
+if [ "$site" = 1 ]; then
+	echo -e "Criando as pastas para o novo projecto Bootstrap-3..."
+	cd Sites
+
+	#(Faz o download da última versão do bootstrap e descomprime)
+	wget https://github.com/twbs/bootstrap/releases/download/v$bt_ver/bootstrap-$bt_ver-dist.zip && unzip bootstrap-$bt_ver-dist.zip && rm bootstrap-$bt_ver-dist.zip
+
+	#(Renomeia a pasta)
+	mv bootstrap-$bt_ver-dist $url
+fi
+
+# If creating a wordpress project then we'll download the latest version.
+if [ "$wp" = 1 ]; then
+	cd Sites
+
+	#(Faz o download da última versão do Wordpress e descomprime)
+	wget http://pt.wordpress.org/latest-pt_PT.zip && unzip latest-pt_PT.zip && rm latest-pt_PT.zip
+
+	#(Renomeia a pasta)
+	mv wordpress $url
+
+	#(Cria a base de dados no Mysql)
+	echo -e "Criando a base de dados para o Wordpress...\n"
+	mysql -u root -psavage -e "CREATE DATABASE $name"
+
+fi
+
+# If creating a wordpress project then we'll download the latest version.
+if [ "$add" = 1 ]; then
+	echo -e "\nCriando o Virtual Host http://$url no etc/apache2..."
+	echo -e "\nCriando a pasta do url $url em ~/Sites..."
+	cd Sites
+	mkdir -p $docroot
+else
+	echo -e "\nCriando um novo Virtual Host http://$url para: $docroot"
+fi
+
+# Se for um projecto laravel vai buscar um template proprio
+if [ "$laravel" = 1 ]; then
+	sudo cp /etc/apache2/sites-available/template-l5 /etc/apache2/sites-available/$url.conf
+else
+	sudo cp /etc/apache2/sites-available/template /etc/apache2/sites-available/$url.conf
+fi
+
+sudo sed -i 's/template.url/'$url'/g' /etc/apache2/sites-available/$url.conf
+sudo sed -i 's#template.docroot#'$docroot'#g' /etc/apache2/sites-available/$url.conf
+
+echo -e "\nAdicionando a url $url no ficheiro /etc/hosts...\n"
+
+sudo sed -i '$a 127.0.0.1       '$url /etc/hosts
+sudo a2ensite $url.conf
+sudo service apache2 reload
+
+echo -e "\n Já pode aceder o seu Virtual Host em http://$url\n"
+
+exit 0

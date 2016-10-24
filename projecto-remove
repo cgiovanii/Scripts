@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#-------------------------------------------------------------------------------------------------
+# Autor: Giovani Oliveira
+# Data:	 23/04/2014
+# Descrição: Script para remover projectos
+# Versão: 2.0
+#-------------------------------------------------------------------------------------------------
+url=$1
+docroot=$HOME/Sites/$url
+
+sudo -v
+echo -e "\nRemovendo $url de /etc/hosts."
+sudo sed -i '/'$url'/d' /etc/hosts
+
+echo -e "\nDesabilitando e apagando o virtual host $url.\n"
+rm -r $docroot
+sudo a2dissite $url.conf
+sudo rm /etc/apache2/sites-available/$url.conf
+sudo service apache2 reload
+
+echo -e "\nO Projecto $url foi removido com sucesso!.\n"
+exit 0

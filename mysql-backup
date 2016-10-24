@@ -1,0 +1,27 @@
+#!/bin/bash
+### MySQL Server Login Info ###
+USER="root"
+PASS="savage"
+HOST="127.0.0.1"
+DIR="$HOME/Backups"
+
+### Data do Backup ###
+NOW=$(date +"%d-%m-%Y")
+
+### Cria a pasta do dia se ela não existir ###
+[ ! -d "$DIR/$NOW" ] && mkdir -p "$DIR/$NOW"
+
+### Lista todas as bases de dados, faz o dump e compacta com o gzip. ###
+DBS="$(mysql -u ${USER} -h ${HOST} -p${PASS} -Bse 'show databases')"
+for DATABASE in $DBS
+do
+ FILE=$DIR/$NOW/$DATABASE.$NOW.sql
+ mysqldump --opt --user=${USER} --password=${PASS} ${DATABASE} > ${FILE}
+ gzip ${FILE}
+done
+
+### Remove os backups das dbs de sistema. ###
+rm  $DIR/$NOW/phpmyadmin.$NOW.sql.gz $DIR/$NOW/information_schema.$NOW.sql.gz $DIR/$NOW/mysql.$NOW.sql.gz $DIR/$NOW/performance_schema.$NOW.sql.gz $DIR/$NOW/sys.$NOW.sql.gz
+
+clear
+echo "Todas as bases de dados exportadas com sucesso!"
