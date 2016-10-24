@@ -1,0 +1,21 @@
+<virtualhost *:80> 
+ServerAdmin webmaster@localhost 
+ServerName template.url
+DocumentRoot template.docroot
+<Directory template.docroot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride All
+	Order allow,deny
+	Allow from all
+	Require all granted
+	<IfModule mod_rewrite.c>
+		Options -MultiViews
+		RewriteEngine On
+		RewriteCond %{REQUEST_FILENAME} !-f
+		RewriteRule ^ index.php [L]
+	</IfModule>
+</Directory>
+LogLevel warn 
+ErrorLog ${APACHE_LOG_DIR}/error.log 
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+</virtualhost>

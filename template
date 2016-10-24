@@ -1,0 +1,15 @@
+<virtualhost *:80>
+ServerAdmin webmaster@localhost
+ServerName template.url
+DocumentRoot template.docroot
+<Directory template.docroot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride All
+	Order allow,deny
+	Allow from all
+	Require all granted
+</Directory>
+LogLevel warn
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+</virtualhost>
