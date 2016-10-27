@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+#
+#   Instant Wordpress!
+#   ------------------
+#   My script for installing the latest version of WordPress plus a number of plugins I find useful.
+#
+#   To use this script, go to the directory you want to install Wordpress to in the terminal and run this command:
+#
+#   curl scripts.snaptortoise.com/wordpress | sh
+#
+#   There you go.
+#
+
+url=$1
+
+# Latest version of WP
+echo "Fetching WordPress..."
+cd Sites
+wget -q http://pt.wordpress.org/latest-pt_PT.zip && unzip -q latest-pt_PT.zip
+
+# Yoast SEO
+echo "Fetching Yoast SEO plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/wordpress-seo.zip
+unzip -q wordpress-seo.zip
+mv wordpress-seo wordpress/wp-content/plugins/
+
+# Sitemap Generator
+echo "Fetching Google Sitemap Generator plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/google-sitemap-generator.zip
+unzip -q  google-sitemap-generator.zip
+mv google-sitemap-generator wordpress/wp-content/plugins/
+
+# Contact Form 7
+# echo "Fetching Contact Form 7 plugin..."
+# wget --quiet https://downloads.wordpress.org/plugin/contact-form-7.zip
+# unzip -q  contact-form-7.zip
+# mv contact-form-7 wordpress/wp-content/plugins/
+
+# Ninja Forms
+echo "Fetching Ninja Forms plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/ninja-forms.zip
+unzip -q  ninja-forms.zip
+mv ninja-forms wordpress/wp-content/plugins/
+
+# Super-cache
+echo "Fetching Super Cache plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/wp-super-cache.zip
+unzip -q  wp-super-cache.zip
+mv wp-super-cache wordpress/wp-content/plugins/
+
+# Advanced Custom Fields
+echo "Fetching Advanced Custom Fields plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/advanced-custom-fields.zip
+unzip -q advanced-custom-fields.zip
+mv advanced-custom-fields wordpress/wp-content/plugins/
+
+# Super-cpt
+echo "Fetching SuperCPT plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/super-cpt.zip
+unzip -q super-cpt.0.2.1.zip
+mv super-cpt wordpress/wp-content/plugins/
+
+# Duplicate Post
+echo "Fetching Duplicate Post plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/duplicate-post.zip
+unzip -q duplicate-post.zip
+mv duplicate-post wordpress/wp-content/plugins/
+
+# WP Migrate DB
+echo "Fetching WP Migrate DB plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/wp-migrate-db.zip
+unzip -q wp-migrate-db.zip
+mv wp-migrate-db wordpress/wp-content/plugins/
+
+# BBQ: Block Bad Queries
+echo "Fetching BBQ: Block Bad Queries plugin..."
+wget --quiet https://downloads.wordpress.org/plugin/block-bad-queries.zip
+unzip -q block-bad-queries.zip
+mv block-bad-queries wordpress/wp-content/plugins/
+
+# Cleanup
+echo "Cleaning up temporary files and directories..."
+rm *.zip
+
+# Move stuff into current directory
+mv wordpress $url.dev
+
+#(Cria a base de dados no Mysql)
+echo -e "Criando a base de dados para o Wordpress...\n"
+mysql -u root -psavage -e "CREATE DATABASE $url"
+
+echo "Done!"
