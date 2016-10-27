@@ -144,7 +144,7 @@ if [ "$wp" = 1 ]; then
 	cd Sites
 
 	echo "Fetching Wordpress..."
-	wget http://pt.wordpress.org/latest-pt_PT.zip && unzip -q latest-pt_PT.zip && rm latest-pt_PT.zip
+	wget --quiet http://pt.wordpress.org/latest-pt_PT.zip && unzip -q latest-pt_PT.zip
 
 	# Super-cpt
 	echo "Fetching SuperCPT plugin..."
