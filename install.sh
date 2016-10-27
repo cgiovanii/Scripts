@@ -38,13 +38,13 @@ phpmyadmin      phpmyadmin/mysql/app-pass       password $DEFAULTPASS
 EOF
 
 echo "--- Instalando pacotes basicos ---"
-sudo apt-get install vim curl software-properties-common git gdebi synaptic--assume-yes --force-yes
+sudo apt-get install vim curl software-properties-common git gdebi synaptic --assume-yes --force-yes
 
 echo "--- Instalando MySQL, Phpmyadmin e alguns outros modulos ---"
 sudo apt-get install mysql-server-5.7 mysql-client-5.7 mysql-workbench phpmyadmin --assume-yes --force-yes
 
 echo "--- Instalando PHP, Apache e alguns modulos ---"
-sudo apt-get install apache2 php7.0 libapache2-mod-php7.0 php7.0-curl php7.0-gd php7.0-mcrypt php7.0-cli php7.0-json php7.0-bmstring php7.0-opcache php7.0-xml php7.0-zip  php7.0-mysql --assume-yes --force-yes
+sudo apt-get install apache2 libapache2-mod-php7.0 php7.0 php7.0-curl php7.0-gd php7.0-mcrypt php7.0-cli php7.0-json php7.0-bmstring php7.0-opcache php7.0-xml php7.0-zip  php7.0-mysql --assume-yes --force-yes
 
 echo "--- Habilitando mod-rewrite do Apache ---"
 sudo a2enmod rewrite
@@ -56,9 +56,9 @@ echo "--- Baixando e Instalando Composer ---"
 curl -sS https://getcomposer.org/installer | php
 sudo mv composer.phar /usr/local/bin/composer
 
-# echo "--- Instalando Banco NoSQL -> Redis <- ---"
-# sudo apt-get install redis-server --assume-yes
-# sudo apt-get install php-redis
+echo "--- Instalando Banco NoSQL -> Redis <- ---"
+sudo apt-get install redis-server --assume-yes
+sudo apt-get install php-redis
 
 echo "--- Adicionando repositorio do pacote PHP 5.6 ---"
 sudo add-apt-repository ppa:webupd8team/java
@@ -79,9 +79,17 @@ sudo mv envvars /etc/apache2
 
 # Instala os scripts para criar os projectos. #
 echo -e "\n--- Movendo os scripts para a pasta /usr/local/bin --- "
-sudo chmod 755 mysql-backup |sudo mv mysql-backup /usr/local/bin
-sudo chmod 755 projecto |sudo mv projecto /usr/local/bin
-sudo chmod 755 projecto-remove |sudo mv projecto-remove /usr/local/bin
+sudo chmod 755 mysql-backup && sudo mv mysql-backup /usr/local/bin
+sudo chmod 755 projecto && sudo mv projecto /usr/local/bin
+sudo chmod 755 projecto-remove && sudo mv projecto-remove /usr/local/bin
+sudo chmod 755 wp-install && sudo mv wp-install /usr/local/bin
+sudo chmod 755 laravel-set-pt && sudo mv laravel-set-pt /usr/local/bin
+
+echo -e "\n--- Movendo os scripts de ambiente --- "
+mv git-completion $HOME/.git-completion
+mv git-prompt $HOME/.git-prompt
+mv bash_aliases $HOME/.bash_aliases
+mv bashrc $HOME/.bashrc
 
 # Instale apartir daqui o que você desejar
 echo -e "\n--- Criando a pasta ~/Sites --- "
