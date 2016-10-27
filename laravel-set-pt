@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# Ficheiro para importar lang pack para o laravel 5
+# **************************************************
+url=$1
+lang="/home/cgiovani/Sites/$url/resources/lang/pt"
+echo -e "\n---Importando do GitHub os ficheiros de tradução.\n"
+mkdir -p $lang
+
+echo "Importando do GitHub o ficheiro de tradução auth.php"
+wget -q -P $lang https://raw.githubusercontent.com/caouecs/Laravel-lang/master/src/pt/auth.php
+
+echo "Importando do GitHub o ficheiro de tradução pagination.php"
+wget -q -P $lang https://raw.githubusercontent.com/caouecs/Laravel-lang/master/src/pt/pagination.php
+
+echo "Importando do GitHub o ficheiro de tradução passwords.php"
+wget -q -P $lang https://raw.githubusercontent.com/caouecs/Laravel-lang/master/src/pt/passwords.php
+
+echo "Importando do GitHub o ficheiro de tradução validation.php"
+wget -q -P $lang https://raw.githubusercontent.com/caouecs/Laravel-lang/master/src/pt/validation.php
+
+echo -e "\n--- Importação de ficheiros de tradução finalizada !\n"
+exit 0
