@@ -116,11 +116,12 @@ if [ "$laravel" = 1 ]; then
 		echo "Criando a pasta $docroot..."
 		mkdir -p $docroot
 	fi
-	echo -e "Instalando a última versão do Laravel...\n"
-	composer create-project --prefer-dist laravel/laravel $docroot
 
 	echo -e "Criando a base de dados para o Laravel...\n"
 	mysql -u root -psavage -e "CREATE DATABASE $name"
+
+	echo -e "Instalando a última versão do Laravel...\n"
+	composer create-project laravel/laravel $docroot --prefer-dist
 
 	docroot="$docroot/public"
 fi
