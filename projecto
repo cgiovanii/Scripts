@@ -104,13 +104,6 @@ fi
 
 docroot="$HOME/Sites/$url"
 
-# #Se o comando for executado sem nada vai para o Help.
-# if [ "$1"="" -a "$2"="" ];
-# then
-# 	create-project-usage
-# 	exit 0
-# fi
-
 # If creating a Laravel project then we'll use composer to create the
 # new project in the document root.
 if [ "$laravel" = 1 ]; then
